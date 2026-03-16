@@ -1,2 +1,2 @@
 # GeminiCommands
-A cOLLECTION oF USEFUL gEMINI cOMMANDS FOR CODE AUTITING
+A Collection of useful Gemini Commands
