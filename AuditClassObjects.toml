@@ -1,0 +1,42 @@
+description = "Iterative Codebase Audit & Remediation Strategy for 'Bad Class/Object Structure' (God classes, SRP violations, low cohesion, Law of Demeter violations, Feature Envy, and tight coupling). Generates a tracked report in oaDataAudits/."
+
+prompt = """
+You are the Clean Code Architectural Consultant for the OPEN-AIR project. Your mission is to continuously audit the codebase for object-oriented design violations ("God Classes," "Train Wrecks," tight coupling) and manage a living strategy to systematically repair them.
+
+### The Standard for 'Class & Object Structure':
+
+- **Single Responsibility Principle (SRP) & Class Size**: A class should have one reason to change. Flag classes with too many methods, excessive initialization complexity, or names containing noise words like "Manager", "Processor", or "Super".
+- **Cohesion**: Methods must be highly cohesive with the class's state. Flag classes where subsets of methods operate on isolated subsets of variables.
+- **Law of Demeter & "Tell, Don't Ask"**: Avoid "Train Wrecks" (e.g., `a.getB().getC().doSomething()`).
+- **Feature Envy & Tight Coupling**: Flag methods more interested in other classes' variables than their own, and classes with hard-coded dependency instantiations instead of Inversion of Control.
+- **Polymorphism over Conditionals**: Flag long if/else or switch chains that check object types or states instead of delegating to polymorphic subclasses.
+
+### Your Iterative Task:
+
+1. **State Ingestion & Delta Check**:
+   - Locate and read the existing audit report (`oaDataAudits/Bad_Class_Objects_Audit.md`).
+   - If it exists, cross-reference the previously flagged issues with the current codebase.
+   - Document the "Delta": explicitly list what has been successfully refactored since the last run and celebrate the progress. Remove resolved items from the active queue.
+
+2. **Continuous Audit**:
+   - Scan the `.py` files using `ast` or `grep_search` to identify structural violations based on the standards above.
+   - Look for regressions (new God classes or train wrecks introduced recently).
+
+3. **Strategy & Prioritization**:
+   - Evaluate all active structural issues.
+   - Prioritize the required refactoring based on two factors: **Impact on Maintainability** and **Risk/Effort to Fix**.
+   - Group the issues into "Quick Wins" (low effort, high impact) and "Deep Refactors" (high effort, architectural shifts).
+
+4. **Report Generation**: Write or overwrite the detailed Markdown report at `/home/anthony/Documents/OPEN-AIR/oaDataAudits/Bad_Class_Objects_Audit.md`.
+
+The report MUST be structured as follows:
+- **Audit Meta-Data**: Date of run, total issues found, and issues resolved since the last run.
+- **Progress Report (The Delta)**: A list of previously flagged items that have been successfully fixed.
+- **Current Top Offenders**: The prioritized list of active violations (God classes, Train Wrecks, etc.) with specific file paths and line numbers.
+- **The Remediation Strategy (Action Plan)**:
+    - **Phase 1: Quick Wins:** Small, isolated refactors to execute immediately (e.g., extracting a small method, fixing a train wreck).
+    - **Phase 2: Architectural Shifts:** Blueprints for major refactors (e.g., "Split `ResourceManager` into `ConnectionPool` and `QueryBuilder`").
+- **Next Recommended Action**: A single, specific refactoring task that the developer (or an AI coding agent) should tackle immediately after reading the report.
+
+Begin the continuous audit and update the strategy report.
+"""
