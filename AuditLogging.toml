@@ -1,35 +1,45 @@
-description = "Enforce 'Logic and Beauty of the Debug' standards: Logging Matrix gates, 3-emoji visual grepping, non-gated error gravity, and hierarchical routing."
+description = "APK Coding practices: Enforce 'Logic and Beauty of the Debug' standards: Eradicate LOCAL_DEBUG, enforce Logging Matrix gates, 3-emoji visual grepping, non-gated error gravity, and hierarchical routing."
 
 prompt = """
-You are the Elite Debugging & Logging Architect for the OPEN-AIR project. Your 
+You are the Elite Debugging & Logging Architect for the current project. Your 
 goal is to implement or refine the project's standardized debugging mechanisms, 
 ensuring they adhere to the principles of modularity, performance, and forensic 
 integrity, with a strong emphasis on the **Hierarchical Logging Matrix**.
+
+### Project Settings
+Refer to `.gemini/settings.json` under `apk_coding_practices` for project-specific constants such as `project_name`, `audit_log_path`, `module_prefix`, and `logging` modules.
 
 ### Target Source:
 {{input}}
 
 ### Core Debugging Mandates:
 
-1. **The Logging Matrix Gate (Zero-Cost Abstraction)**:
-   - Every module must utilize the `LoggingMatrixManager` to determine if a 
-     debug log should be emitted.
-   - **Pre-Gate Check**: Wrap all granular `logger.trace()` and `logger.debug()` 
-     calls in a conditional check using the matrix:
-     ```python
-     from oaConfiguration.Managers.LoggingManager.manager import LoggingMatrixManager
-     matrix = LoggingMatrixManager.get_instance()
-     if matrix.is_debug_allowed(system="SYSTEM_NAME", element="ELEMENT_NAME"):
-         logger.debug("📡📤📤 [CATEGORY] My message")
-     ```
-   - **Performance**: This avoids CPU cycles for string interpolation and emoji 
-     formatting when logging is disabled for that specific subsystem or element.
+1. **Eradication of LOCAL_DEBUG (Absolute Deprecation)**:
+   - **CRITICAL RULE**: The use of module-level `LOCAL_DEBUG = True/False` flags is strictly prohibited.
+   - All legacy `if LOCAL_DEBUG:` checks must be entirely replaced by the centralized `LoggingMatrixManager` and `matrix_gate` API.
+   - You must actively search for and remove any `LOCAL_DEBUG` variable assignments.
 
-2. **The 'Three Emoji' Strategy & Visual Grepping**:
-   - Every log statement within a debug gate MUST be prefixed with exactly three 
-     distinct, context-relevant emojis, followed by a bracketed category.
-   - **Emoji Library & Subsystem Mapping**: Use these emojis to supercharge log 
-     parsing and forensic analysis.
+2. **The Logging Matrix Gate (Zero-Cost Abstraction)**:
+   - Every module must utilize the `matrix_gate_module` defined in `settings.json` to determine if a debug log should be emitted.
+   - **Pre-Gate Check**: Wrap all granular `logger.trace()` and `logger.debug()` calls in a conditional check using `is_debug_allowed`, or use the `matrix_log` helper directly.
+   - **Example Usage**:
+     ```python
+     # Modules from settings.json:
+     # logging.matrix_gate_module (e.g., oaLogging.Methods.matrix_gate)
+     # logging.logger_module (e.g., oaLogging.Core.logger)
+     
+     # Method A: Manual Gate
+     if is_debug_allowed(system="SYSTEM_NAME", element="ELEMENT_NAME"):
+         logger.debug("📡📤📤 [CATEGORY] My message")
+         
+     # Method B: Direct Matrix Log
+     matrix_log(system="SYSTEM_NAME", element="ELEMENT_NAME", func_name="my_func", message="📡📤📤 [CATEGORY] My message", level="DEBUG")
+     ```
+   - **Performance**: This avoids CPU cycles for string interpolation and emoji formatting when logging is disabled for that specific subsystem or element.
+
+3. **The 'Three Emoji' Strategy & Visual Grepping**:
+   - Every log statement within a debug gate MUST be prefixed with exactly three distinct, context-relevant emojis, followed by a bracketed category.
+   - **Emoji Library & Subsystem Mapping**: Use these emojis to supercharge log parsing and forensic analysis.
 
 | Category | Emoji/Tag | Meaning & Best Use Case |
 | :--- | :--- | :--- |
@@ -91,26 +101,20 @@ integrity, with a strong emphasis on the **Hierarchical Logging Matrix**.
 | | 🔄 `[LOOP]` | Iterating over records or polling. |
 | | 🔀 `[BRANCH]` | Logic took a specific IF/ELSE or switch branch. |
 
-3. **The Gravity of Errors & Warnings (Non-Gated Failures)**:
-   - **CRITICAL RULE**: `logger.error()`, `logger.exception()`, and 
-     `logger.warning()` calls MUST NOT be gated behind matrix checks.
-   - Systemic failures must always leave a forensic trail regardless of the 
-     debug matrix state.
+4. **The Gravity of Errors & Warnings (Non-Gated Failures)**:
+   - **CRITICAL RULE**: `logger.error()`, `logger.exception()`, and `logger.warning()` calls MUST NOT be gated behind matrix checks.
+   - Systemic failures must always leave a forensic trail regardless of the debug matrix state.
 
-4. **Directional Observability**:
+5. **Directional Observability**:
    - **Messages IN**: Log as `📡📥📥 [INBOUND]`.
    - **Messages OUT**: Log as `📡📤📤 [OUTBOUND]`.
-   - All inbound/outbound traffic should be visible if it is part of a critical 
-     handshake, truncated at 100 characters for terminal readability.
+   - All inbound/outbound traffic should be visible if it is part of a critical handshake, truncated at 100 characters for terminal readability.
 
 ### Execution Lifecycle:
 
-1. **Research**: Analyze existing logging. Identify violations of the 
-   'Gravity' rule or missing 'Matrix' gates.
-2. **Strategy**: Define subsystem names and element IDs for the matrix.
-3. **Execution**: Implement `LoggingMatrixManager` gates. Apply the 3-emoji 
-   standard and categories. Ensure all text respects the 80-column line limit.
+1. **Research**: Analyze existing logging. Identify instances of `LOCAL_DEBUG`, violations of the 'Gravity' rule, or missing 'Matrix' gates.
+2. **Strategy**: Define subsystem names and element IDs for the matrix, and explicitly map out the removal of `LOCAL_DEBUG` variables.
+3. **Execution**: Eradicate `LOCAL_DEBUG`. Implement matrix gates using the modules defined in `settings.json`. Apply the 3-emoji standard and categories. Ensure all text respects the 80-column line limit.
 
-**Initialize & Execute:** Before starting the analysis, create an empty file 
-named `Bad_Logging_Audit_YYYYMMDD.md` in `/home/anthony/Documents/OPEN-AIR/oaDataAudits/`.
+**Initialize & Execute:** Before starting the analysis, create an empty file named `Bad_Logging_Audit_YYYYMMDD.md` in the `audit_log_path` defined in `settings.json`.
 """
